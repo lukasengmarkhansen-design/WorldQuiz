@@ -1,0 +1,1758 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Quiz</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #101827, #1b3150);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game {
+    width: 90%;
+    max-width: 900px;
+    background: #1d2b42;
+    border-radius: 20px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.45);
+}
+
+h1 {
+    font-size: 45px;
+    margin-top: 0;
+    letter-spacing: 3px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 14px 35px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #4da3ff;
+    color: white;
+}
+
+button:hover {
+    background: #318ee8;
+}
+
+.mode-button {
+    display: block;
+    width: 280px;
+    margin: 15px auto;
+    font-size: 20px;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    margin-bottom: 25px;
+}
+
+.flag-container {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#flag {
+    max-width: 650px;
+    max-height: 280px;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    object-fit: contain;
+}
+
+.attempts {
+    font-size: 20px;
+    margin: 15px;
+}
+
+.hearts {
+    font-size: 25px;
+    letter-spacing: 5px;
+}
+
+input {
+    width: 80%;
+    max-width: 500px;
+    padding: 15px;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+}
+
+.message {
+    min-height: 30px;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.correct {
+    color: #4cff91;
+}
+
+.wrong {
+    color: #ff6565;
+}
+
+.hidden {
+    display: none;
+}
+
+.big-score {
+    font-size: 55px;
+    font-weight: bold;
+    margin: 25px;
+}
+
+
+/* =========================
+   GLOBLE
+========================= */
+
+#globleScreen h1 {
+    font-size: 50px;
+    letter-spacing: 5px;
+    margin: 0 0 8px 0;
+}
+
+
+/* INPUT MELLEM GLOBLE OG GLOBUS */
+
+#globleInput {
+    width: 320px;
+    max-width: 75%;
+    padding: 11px 15px;
+    margin: 0 auto 8px auto;
+    font-size: 17px;
+    text-align: center;
+    border: none;
+    border-radius: 9px;
+    outline: none;
+}
+
+#globleInput:focus {
+    box-shadow: 0 0 0 3px #4da3ff;
+}
+
+#globleScreen button {
+    padding: 10px 22px;
+    font-size: 15px;
+    margin: 3px;
+}
+
+
+/* SCOREBOARD */
+
+#globleScoreboard {
+    width: 360px;
+    max-width: 82vw;
+    margin: 8px auto;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    text-align: center;
+}
+
+#globleScoreboard h2 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    letter-spacing: 2px;
+}
+
+#globleScoreList {
+    max-height: 130px;
+    overflow-y: auto;
+    margin-bottom: 7px;
+}
+
+.score-row {
+    padding: 3px 0;
+    font-size: 15px;
+}
+
+.score-row.correct {
+    color: #4cff91;
+    font-weight: bold;
+}
+
+#globleGuessCount {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+#globleCountdown {
+    margin-top: 5px;
+    font-size: 15px;
+    color: #ffcc66;
+}
+
+
+
+.globle-guess-list {
+    width: 500px;
+    max-width: 82vw;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 8px auto 0;
+    text-align: left;
+}
+
+.globle-guess-row {
+    display: grid;
+    grid-template-columns: 1fr 95px 85px;
+    gap: 8px;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.globle-guess-distance {
+    text-align: right;
+}
+
+.globle-guess-direction {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* GLOBUS */
+
+.globe-container {
+    width: 500px;
+    height: 500px;
+    max-width: 82vw;
+    max-height: 82vw;
+
+    margin: 0 auto;
+
+    border-radius: 50%;
+    overflow: hidden;
+    background: white;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.5),
+        inset 0 0 30px rgba(0,0,0,0.15);
+
+    cursor: grab;
+    touch-action: none;
+}
+
+.globe-container:active {
+    cursor: grabbing;
+}
+
+#globe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    user-select: none;
+}
+
+.country {
+    fill: white;
+    stroke: #222;
+    stroke-width: 0.7px;
+    pointer-events: none;
+}
+
+/* GLOBLE - farve på gættede lande */
+.country.guess {
+    stroke: #222;
+    stroke-width: 0.7px;
+}
+
+.country.guess-correct {
+    fill: #4cff91;
+}
+
+.globe-border {
+    fill: none;
+    stroke: #222;
+    stroke-width: 2px;
+    pointer-events: none;
+}
+
+#globleMessage {
+    min-height: 22px;
+    margin: 3px 0 6px 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.back-button {
+    margin-top: 8px;
+}
+
+@media (max-width: 650px) {
+
+    .game {
+        padding: 20px;
+    }
+
+    .globe-container {
+        width: 90vw;
+        height: 90vw;
+    }
+
+    h1 {
+        font-size: 35px;
+    }
+
+    #globleScreen h1 {
+        font-size: 42px;
+    }
+
+    #globleInput {
+        width: 80%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+
+<!-- =========================
+     MAIN MENU
+========================= -->
+
+<div id="menuScreen">
+
+    <h1>WORLD QUIZ</h1>
+
+    <p style="font-size:20px;">
+        Choose a game mode
+    </p>
+
+    <button class="mode-button" onclick="startFlagQuiz()">
+        FLAG QUIZ
+    </button>
+
+    <button class="mode-button" onclick="startGloble()">
+        GLOBLE
+    </button>
+
+</div>
+
+
+<!-- =========================
+     FLAG QUIZ
+========================= -->
+
+<div id="gameScreen" class="hidden">
+
+    <h1>FLAG QUIZ</h1>
+
+    <div class="stats">
+        <div id="progress">
+            Flag 1 / 195
+        </div>
+
+        <div id="score">
+            Score: 0
+        </div>
+    </div>
+
+    <div class="flag-container">
+
+        <img id="flag" src="" alt="Flag">
+
+    </div>
+
+    <div class="attempts">
+
+        <div id="attemptText">
+            Guesses left: 5
+        </div>
+
+        <div id="hearts" class="hearts">
+            ❤️ ❤️ ❤️ ❤️ ❤️
+        </div>
+
+    </div>
+
+    <input
+        id="answer"
+        type="text"
+        placeholder="Type the country name..."
+        autocomplete="off"
+    >
+
+    <br>
+
+    <button onclick="checkAnswer()">
+        GUESS
+    </button>
+
+    <div id="message" class="message"></div>
+
+    <button onclick="backToMenu()">
+        BACK TO MENU
+    </button>
+
+</div>
+
+
+<!-- =========================
+     END SCREEN
+========================= -->
+
+<div id="endScreen" class="hidden">
+
+    <h1>FINISHED!</h1>
+
+    <p style="font-size:20px;">
+        You completed all the flags.
+    </p>
+
+    <div id="finalScore" class="big-score">
+        0 / 195
+    </div>
+
+    <p id="percentage"></p>
+
+    <button onclick="startFlagQuiz()">
+        PLAY AGAIN
+    </button>
+
+    <br>
+
+    <button onclick="backToMenu()">
+        BACK TO MENU
+    </button>
+
+</div>
+
+
+<!-- =========================
+     GLOBLE
+========================= -->
+
+<div id="globleScreen" class="hidden">
+
+    <h1>GLOBLE</h1>
+
+
+    <!-- HER SKRIVER MAN LANDET -->
+
+    <input
+        id="globleInput"
+        type="text"
+        placeholder="Type a country..."
+        autocomplete="off"
+    >
+
+
+    <br>
+
+
+    <button id="globleGuessButton" onclick="globleGuess()">
+        GUESS
+    </button>
+
+
+    <div id="globleMessage"></div>
+
+    <!-- SCOREBOARD VISER UNDER VENTETIDEN -->
+    <div id="globleScoreboard" class="hidden">
+        <h2>ROUND SCOREBOARD</h2>
+        <div id="globleScoreList"></div>
+        <div id="globleGuessCount"></div>
+        <div id="globleCountdown"></div>
+    </div>
+
+
+    <!-- GLOBUS -->
+
+    <div class="globe-container" id="globeContainer">
+
+        <svg
+            id="globe"
+            viewBox="0 0 600 600"
+        ></svg>
+
+    </div>
+
+
+    
+<div id="globleGuessList" class="globle-guess-list"></div>
+
+<button class="back-button" onclick="backToMenu()">
+        BACK TO MENU
+    </button>
+
+</div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+
+<script>
+
+/* ========================================================
+   COUNTRY DATABASE
+======================================================== */
+
+const countries = [
+
+["af","Afghanistan"],
+["al","Albania"],
+["dz","Algeria"],
+["ad","Andorra"],
+["ao","Angola"],
+["ag","Antigua and Barbuda"],
+["ar","Argentina"],
+["am","Armenia"],
+["au","Australia"],
+["at","Austria"],
+["az","Azerbaijan"],
+
+["bs","Bahamas"],
+["bh","Bahrain"],
+["bd","Bangladesh"],
+["bb","Barbados"],
+["by","Belarus"],
+["be","Belgium"],
+["bz","Belize"],
+["bj","Benin"],
+["bt","Bhutan"],
+["bo","Bolivia"],
+["ba","Bosnia and Herzegovina"],
+["bw","Botswana"],
+["br","Brazil"],
+["bn","Brunei"],
+["bg","Bulgaria"],
+["bf","Burkina Faso"],
+["bi","Burundi"],
+
+["kh","Cambodia"],
+["cm","Cameroon"],
+["ca","Canada"],
+["cv","Cape Verde"],
+["cf","Central African Republic"],
+["td","Chad"],
+["cl","Chile"],
+["cn","China"],
+["co","Colombia"],
+["km","Comoros"],
+["cg","Republic of the Congo"],
+["cd","Democratic Republic of the Congo"],
+["cr","Costa Rica"],
+["ci","Ivory Coast"],
+["hr","Croatia"],
+["cu","Cuba"],
+["cy","Cyprus"],
+["cz","Czech Republic"],
+
+["dk","Denmark"],
+["dj","Djibouti"],
+["dm","Dominica"],
+["do","Dominican Republic"],
+
+["ec","Ecuador"],
+["eg","Egypt"],
+["sv","El Salvador"],
+["gq","Equatorial Guinea"],
+["er","Eritrea"],
+["ee","Estonia"],
+["sz","Eswatini"],
+["et","Ethiopia"],
+
+["fj","Fiji"],
+["fi","Finland"],
+["fr","France"],
+
+["ga","Gabon"],
+["gm","Gambia"],
+["ge","Georgia"],
+["de","Germany"],
+["gh","Ghana"],
+["gr","Greece"],
+["gd","Grenada"],
+["gt","Guatemala"],
+["gn","Guinea"],
+["gw","Guinea-Bissau"],
+["gy","Guyana"],
+
+["ht","Haiti"],
+["hn","Honduras"],
+["hu","Hungary"],
+
+["is","Iceland"],
+["in","India"],
+["id","Indonesia"],
+["ir","Iran"],
+["iq","Iraq"],
+["ie","Ireland"],
+["il","Israel"],
+["it","Italy"],
+
+["jm","Jamaica"],
+["jp","Japan"],
+["jo","Jordan"],
+
+["kz","Kazakhstan"],
+["ke","Kenya"],
+["ki","Kiribati"],
+["kw","Kuwait"],
+["kg","Kyrgyzstan"],
+
+["la","Laos"],
+["lv","Latvia"],
+["lb","Lebanon"],
+["ls","Lesotho"],
+["lr","Liberia"],
+["ly","Libya"],
+["li","Liechtenstein"],
+["lt","Lithuania"],
+["lu","Luxembourg"],
+
+["mg","Madagascar"],
+["mw","Malawi"],
+["my","Malaysia"],
+["mv","Maldives"],
+["ml","Mali"],
+["mt","Malta"],
+["mh","Marshall Islands"],
+["mr","Mauritania"],
+["mu","Mauritius"],
+["mx","Mexico"],
+["fm","Micronesia"],
+["md","Moldova"],
+["mc","Monaco"],
+["mn","Mongolia"],
+["me","Montenegro"],
+["ma","Morocco"],
+["mz","Mozambique"],
+["mm","Myanmar"],
+
+["na","Namibia"],
+["nr","Nauru"],
+["np","Nepal"],
+["nl","Netherlands"],
+["nz","New Zealand"],
+["ni","Nicaragua"],
+["ne","Niger"],
+["ng","Nigeria"],
+["kp","North Korea"],
+["mk","North Macedonia"],
+["no","Norway"],
+
+["om","Oman"],
+
+["pk","Pakistan"],
+["pw","Palau"],
+["pa","Panama"],
+["pg","Papua New Guinea"],
+["py","Paraguay"],
+["pe","Peru"],
+["ph","Philippines"],
+["pl","Poland"],
+["pt","Portugal"],
+
+["qa","Qatar"],
+
+["ro","Romania"],
+["ru","Russia"],
+["rw","Rwanda"],
+
+["kn","Saint Kitts and Nevis"],
+["lc","Saint Lucia"],
+["vc","Saint Vincent and the Grenadines"],
+["ws","Samoa"],
+["sm","San Marino"],
+["st","Sao Tome and Principe"],
+["sa","Saudi Arabia"],
+["sn","Senegal"],
+["rs","Serbia"],
+["sc","Seychelles"],
+["sl","Sierra Leone"],
+["sg","Singapore"],
+["sk","Slovakia"],
+["si","Slovenia"],
+["sb","Solomon Islands"],
+["so","Somalia"],
+["za","South Africa"],
+["kr","South Korea"],
+["ss","South Sudan"],
+["es","Spain"],
+["lk","Sri Lanka"],
+["sd","Sudan"],
+["sr","Suriname"],
+["se","Sweden"],
+["ch","Switzerland"],
+["sy","Syria"],
+
+["tj","Tajikistan"],
+["tz","Tanzania"],
+["th","Thailand"],
+["tl","Timor-Leste"],
+["tg","Togo"],
+["to","Tonga"],
+["tt","Trinidad and Tobago"],
+["tn","Tunisia"],
+["tr","Turkey"],
+["tm","Turkmenistan"],
+["tv","Tuvalu"],
+
+["ug","Uganda"],
+["ua","Ukraine"],
+["ae","United Arab Emirates"],
+["gb","United Kingdom"],
+["us","United States"],
+["uy","Uruguay"],
+["uz","Uzbekistan"],
+
+["vu","Vanuatu"],
+["va","Vatican City"],
+["ve","Venezuela"],
+["vn","Vietnam"],
+
+["ye","Yemen"],
+
+["zm","Zambia"],
+["zw","Zimbabwe"]
+
+]
+
+const territories = [
+  ["Anguilla","ai"],
+  ["Bermuda","bm"],
+  ["British Virgin Islands","vg"],
+  ["Cayman Islands","ky"],
+  ["Falkland Islands","fk"],
+  ["Gibraltar","gi"],
+  ["Montserrat","ms"],
+  ["Pitcairn","pn"],
+  ["Saint Helena, Ascension and Tristan da Cunha","sh"],
+  ["Turks and Caicos Islands","tc"],
+  ["British Indian Ocean Territory","io"],
+  ["Akrotiri and Dhekelia","gb"],
+  ["Jersey","je"],
+  ["Guernsey","gg"],
+  ["Isle of Man","im"],
+  ["French Polynesia","pf"],
+  ["New Caledonia","nc"],
+  ["Saint Barthelemy","bl"],
+  ["Saint Martin","mf"],
+  ["Saint Pierre and Miquelon","pm"],
+  ["Wallis and Futuna","wf"],
+  ["Clipperton Island","cp"],
+  ["American Samoa","as"],
+  ["United States Virgin Islands","vi"],
+  ["Guam","gu"],
+  ["Northern Mariana Islands","mp"],
+  ["Puerto Rico","pr"],
+  ["United States Minor Outlying Islands","um"],
+  ["Aruba","aw"],
+  ["Curacao","cw"],
+  ["Sint Maarten","sx"],
+  ["Bonaire","bq"],
+  ["Saba","bq"],
+  ["Sint Eustatius","bq"],
+  ["Christmas Island","cx"],
+  ["Cocos (Keeling) Islands","cc"],
+  ["Norfolk Island","nf"],
+  ["Ashmore and Cartier Islands","au"],
+  ["Coral Sea Islands","au"],
+  ["Cook Islands","ck"],
+  ["Niue","nu"],
+  ["Tokelau","tk"],
+  ["Faroe Islands","fo"],
+  ["Greenland","gl"],
+  ["Hong Kong","hk"],
+  ["Macau","mo"],
+  ["Western Sahara","eh"]
+];
+
+const flagQuizCountries = countries.concat(
+    territories.map(t => [t[1], t[0]])
+);
+;
+
+
+/* ========================================================
+   FLAG QUIZ
+======================================================== */
+
+let quizFlags = [];
+let currentIndex = 0;
+let score = 0;
+let attempts = 5;
+
+
+function startFlagQuiz() {
+
+    document.getElementById("menuScreen").classList.add("hidden");
+    document.getElementById("globleScreen").classList.add("hidden");
+    document.getElementById("endScreen").classList.add("hidden");
+
+    document.getElementById("gameScreen").classList.remove("hidden");
+
+    quizFlags = [...flagQuizCountries];
+
+    quizFlags.sort(() => Math.random() - 0.5);
+
+    currentIndex = 0;
+    score = 0;
+    attempts = 5;
+
+    showFlag();
+}
+
+
+function showFlag() {
+
+    if (currentIndex >= quizFlags.length) {
+        endGame();
+        return;
+    }
+
+    const flag = quizFlags[currentIndex];
+
+    document.getElementById("flag").src =
+        "https://flagcdn.com/w640/" +
+        flag[0] +
+        ".png";
+
+    document.getElementById("progress").textContent =
+        "Flag " +
+        (currentIndex + 1) +
+        " / " +
+        quizFlags.length;
+
+    document.getElementById("score").textContent =
+        "Score: " + score;
+
+    attempts = 5;
+
+    updateAttempts();
+
+    document.getElementById("message").textContent = "";
+
+    document.getElementById("answer").value = "";
+
+    document.getElementById("answer").focus();
+}
+
+
+function updateAttempts() {
+
+    document.getElementById("attemptText").textContent =
+        "Guesses left: " + attempts;
+
+    let hearts = "";
+
+    for (let i = 0; i < attempts; i++) {
+        hearts += "❤️ ";
+    }
+
+    document.getElementById("hearts").textContent = hearts;
+}
+
+
+function checkAnswer() {
+
+    const input = document.getElementById("answer");
+
+    const answer =
+        input.value.trim().toLowerCase();
+
+    if (answer === "") return;
+
+    const correctAnswer =
+        quizFlags[currentIndex][1].toLowerCase();
+
+    if (answer === correctAnswer) {
+
+        score++;
+
+        document.getElementById("message").textContent =
+            "Correct! It is " +
+            quizFlags[currentIndex][1];
+
+        document.getElementById("message").className =
+            "message correct";
+
+        currentIndex++;
+
+        setTimeout(showFlag, 800);
+
+    } else {
+
+        attempts--;
+
+        updateAttempts();
+
+        if (attempts <= 0) {
+
+            document.getElementById("message").textContent =
+                "Wrong! The answer was " +
+                quizFlags[currentIndex][1];
+
+            document.getElementById("message").className =
+                "message wrong";
+
+            currentIndex++;
+
+            setTimeout(showFlag, 1500);
+
+        } else {
+
+            document.getElementById("message").textContent =
+                "Wrong! Try again.";
+
+            document.getElementById("message").className =
+                "message wrong";
+
+            input.value = "";
+            input.focus();
+        }
+    }
+}
+
+
+document.getElementById("answer").addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+            checkAnswer();
+        }
+
+    }
+);
+
+
+function endGame() {
+
+    document.getElementById("gameScreen").classList.add("hidden");
+
+    document.getElementById("endScreen").classList.remove("hidden");
+
+    document.getElementById("finalScore").textContent =
+        score + " / " + quizFlags.length;
+
+    const percentage =
+        Math.round(
+            (score / quizFlags.length) * 100
+        );
+
+    document.getElementById("percentage").textContent =
+        "You got " + percentage + "% correct.";
+}
+
+
+/* ========================================================
+   GLOBLE
+======================================================== */
+
+let globeCreated = false;
+let projection;
+let globePath;
+let globeSVG;
+let globeCountries = null;
+let globleNewRoundTimer = null;
+
+// GLOBLE game state
+let globleTarget = null;
+let globleGuessed = [];
+let globleScoreboardTimer = null;
+let globleCountdownTimer = null;
+
+
+async function startGloble() {
+
+    if (globleNewRoundTimer) {
+        clearTimeout(globleNewRoundTimer);
+        globleNewRoundTimer = null;
+    }
+
+    document.getElementById("menuScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.add("hidden");
+    document.getElementById("endScreen").classList.add("hidden");
+
+    document.getElementById("globleScreen").classList.remove("hidden");
+
+    // Vælg et nyt tilfældigt land
+    globleTarget = countries[Math.floor(Math.random() * flagQuizCountries.length)];
+    globleGuessed = [];
+
+    document.getElementById("globleMessage").textContent = "";
+    document.getElementById("globleInput").value = "";
+
+    document.getElementById("globleScoreboard").classList.add("hidden");
+    document.getElementById("globleGuessList").classList.remove("hidden");
+    document.getElementById("globleGuessList").innerHTML = "";
+    document.getElementById("globleScoreList").innerHTML = "";
+    document.getElementById("globleGuessCount").textContent = "";
+    document.getElementById("globleCountdown").textContent = "";
+    document.getElementById("globleInput").disabled = false;
+    document.getElementById("globleGuessButton").disabled = false;
+
+    if (globleScoreboardTimer) {
+        clearTimeout(globleScoreboardTimer);
+        globleScoreboardTimer = null;
+    }
+
+    if (globleCountdownTimer) {
+        clearInterval(globleCountdownTimer);
+        globleCountdownTimer = null;
+    }
+
+    if (!globeCreated) {
+
+        await createGlobe();
+
+        globeCreated = true;
+    } else {
+        // Gør alle lande hvide igen til den nye runde
+        globeSVG
+            .selectAll(".country")
+            .classed("guess", false)
+            .classed("guess-correct", false)
+            .style("fill", "white");
+    }
+
+    document.getElementById("globleInput").focus();
+}
+
+
+/* ========================================================
+   GLOBLE GUESS
+======================================================== */
+
+function normalizeCountryName(name) {
+    const aliases = {
+        "United States": "United States of America",
+        "Russia": "Russia",
+        "South Korea": "South Korea",
+        "North Korea": "North Korea",
+        "Czech Republic": "Czechia",
+        "Ivory Coast": "Cote d'Ivoire",
+        "Sao Tome and Principe": "Sao Tome and Principe"
+    };
+
+    return aliases[name] || name;
+}
+
+function getCountryFeature(country) {
+    if (!globeCountries) return null;
+
+    const wanted = normalizeCountryName(country[1]).toLowerCase();
+
+    return globeCountries.find(feature => {
+        const name = feature.properties && feature.properties.name;
+        return name && name.toLowerCase() === wanted;
+    }) || null;
+}
+
+function getFeatureBoundaryPoints(feature) {
+    const points = [];
+
+    function collect(coords) {
+        if (!Array.isArray(coords) || coords.length === 0) return;
+
+        if (typeof coords[0] === "number") {
+            points.push(coords);
+            return;
+        }
+
+        coords.forEach(collect);
+    }
+
+    collect(feature.geometry.coordinates);
+    return points;
+}
+
+function pointToSegmentDistance(point, a, b) {
+    // Approximate the Earth locally using latitude/longitude.
+    const latScale = 111.32;
+    const lonScale = 111.32 * Math.cos(point[1] * Math.PI / 180);
+
+    const px = point[0] * lonScale;
+    const py = point[1] * latScale;
+    const ax = a[0] * lonScale;
+    const ay = a[1] * latScale;
+    const bx = b[0] * lonScale;
+    const by = b[1] * latScale;
+
+    const dx = bx - ax;
+    const dy = by - ay;
+
+    if (dx === 0 && dy === 0) {
+        return Math.hypot(px - ax, py - ay);
+    }
+
+    const t = Math.max(
+        0,
+        Math.min(
+            1,
+            ((px - ax) * dx + (py - ay) * dy) /
+            (dx * dx + dy * dy)
+        )
+    );
+
+    const closestX = ax + t * dx;
+    const closestY = ay + t * dy;
+
+    return Math.hypot(px - closestX, py - closestY);
+}
+
+function getBoundaryLines(feature) {
+    const lines = [];
+
+    function collect(coords) {
+        if (!Array.isArray(coords) || coords.length === 0) return;
+
+        if (
+            Array.isArray(coords[0]) &&
+            coords[0].length > 0 &&
+            typeof coords[0][0] === "number"
+        ) {
+            lines.push(coords);
+            return;
+        }
+
+        coords.forEach(collect);
+    }
+
+    collect(feature.geometry.coordinates);
+    return lines;
+}
+
+function distanceBetweenFeatures(featureA, featureB) {
+    const linesA = getBoundaryLines(featureA);
+    const linesB = getBoundaryLines(featureB);
+
+    let shortest = Infinity;
+
+    // Find the shortest distance from a boundary point on one country
+    // to a boundary segment on the other country.
+    for (const lineA of linesA) {
+        for (const lineB of linesB) {
+
+            for (let i = 0; i < lineA.length; i += 2) {
+                const pointA = lineA[i];
+
+                for (let j = 0; j < lineB.length - 1; j += 2) {
+                    const distance = pointToSegmentDistance(
+                        pointA,
+                        lineB[j],
+                        lineB[j + 1]
+                    );
+
+                    if (distance < shortest) {
+                        shortest = distance;
+                    }
+                }
+            }
+
+            // Also check the opposite direction.
+            for (let j = 0; j < lineB.length; j += 2) {
+                const pointB = lineB[j];
+
+                for (let i = 0; i < lineA.length - 1; i += 2) {
+                    const distance = pointToSegmentDistance(
+                        pointB,
+                        lineA[i],
+                        lineA[i + 1]
+                    );
+
+                    if (distance < shortest) {
+                        shortest = distance;
+                    }
+                }
+            }
+        }
+    }
+
+    return shortest;
+}
+
+function colorGuess(country) {
+
+    const guessedFeature = getCountryFeature(country);
+    const targetFeature = getCountryFeature(globleTarget);
+
+    if (!guessedFeature || !targetFeature) return null;
+
+    const distanceKm = distanceBetweenFeatures(
+        guessedFeature,
+        targetFeature
+    );
+
+    // 0 km = dark red.
+    // As the distance increases, the red becomes lighter.
+    const maxDistance = 10000;
+
+    const intensity = Math.max(
+        0,
+        Math.min(1, 1 - distanceKm / maxDistance)
+    );
+
+    const red = 255;
+
+    // Dark red when close, pale red when far away.
+    const green = Math.round(245 - intensity * 175);
+    const blue = Math.round(245 - intensity * 175);
+
+    const fill = `rgb(${red}, ${green}, ${blue})`;
+
+    globeSVG
+        .selectAll(".country")
+        .filter(d => d === guessedFeature)
+        .classed("guess", true)
+        .style("fill", fill);
+
+    return distanceKm;
+}
+
+function showGlobleScoreboard() {
+    const scoreboard = document.getElementById("globleScoreboard");
+    const list = document.getElementById("globleScoreList");
+    const count = document.getElementById("globleGuessCount");
+    const countdown = document.getElementById("globleCountdown");
+
+    list.innerHTML = "";
+
+    globleGuessed.forEach((country, index) => {
+        const row = document.createElement("div");
+        row.className = "score-row" +
+            (country[0] === globleTarget[0] ? " correct" : "");
+
+        row.textContent =
+            (index + 1) + ". " + country[1] +
+            (country[0] === globleTarget[0] ? " - CORRECT" : "");
+
+        list.appendChild(row);
+    });
+
+    count.textContent =
+        "Total guesses: " + globleGuessed.length;
+
+    scoreboard.classList.remove("hidden");
+
+    let secondsLeft = 10;
+    countdown.textContent =
+        "New round in " + secondsLeft + " seconds...";
+
+    if (globleCountdownTimer) {
+        clearInterval(globleCountdownTimer);
+    }
+
+    globleCountdownTimer = setInterval(() => {
+        secondsLeft--;
+
+        if (secondsLeft > 0) {
+            countdown.textContent =
+                "New round in " + secondsLeft + " seconds...";
+        } else {
+            clearInterval(globleCountdownTimer);
+            globleCountdownTimer = null;
+        }
+    }, 1000);
+}
+
+
+
+function getCountryCenter(feature) {
+    if (!feature) return null;
+
+    const points = [];
+
+    function collect(coords) {
+        if (!coords) return;
+
+        if (typeof coords[0] === "number") {
+            points.push(coords);
+        } else {
+            coords.forEach(collect);
+        }
+    }
+
+    collect(feature.geometry.coordinates);
+
+    if (!points.length) return null;
+
+    let lon = 0;
+    let lat = 0;
+
+    points.forEach(p => {
+        lon += p[0];
+        lat += p[1];
+    });
+
+    return [lon / points.length, lat / points.length];
+}
+
+function getDirection(fromFeature, toFeature) {
+    const from = getCountryCenter(fromFeature);
+    const to = getCountryCenter(toFeature);
+
+    if (!from || !to) return "→";
+
+    const lat1 = from[1] * Math.PI / 180;
+    const lon1 = from[0] * Math.PI / 180;
+    const lat2 = to[1] * Math.PI / 180;
+    const lon2 = to[0] * Math.PI / 180;
+
+    const y = Math.sin(lon2 - lon1) * Math.cos(lat2);
+    const x =
+        Math.cos(lat1) * Math.sin(lat2) -
+        Math.sin(lat1) * Math.cos(lat2) *
+        Math.cos(lon2 - lon1);
+
+    let bearing = Math.atan2(y, x) * 180 / Math.PI;
+    bearing = (bearing + 360) % 360;
+
+    if (bearing < 22.5 || bearing >= 337.5) return "N ↑";
+    if (bearing < 67.5) return "NE ↗";
+    if (bearing < 112.5) return "E →";
+    if (bearing < 157.5) return "SE ↘";
+    if (bearing < 202.5) return "S ↓";
+    if (bearing < 247.5) return "SW ↙";
+    if (bearing < 292.5) return "W ←";
+    return "NW ↖";
+}
+
+function updateGlobleGuessList() {
+    const list = document.getElementById("globleGuessList");
+    if (!list || !globleTarget || !globeCountries) return;
+
+    list.innerHTML = "";
+
+    const targetFeature = getCountryFeature(globleTarget);
+
+    globleGuessed.forEach(country => {
+        const guessedFeature = getCountryFeature(country);
+
+        const row = document.createElement("div");
+        row.className = "globle-guess-row";
+
+        const name = document.createElement("div");
+        name.textContent = country[1];
+
+        const distance = document.createElement("div");
+        distance.className = "globle-guess-distance";
+
+        const direction = document.createElement("div");
+        direction.className = "globle-guess-direction";
+
+        if (guessedFeature && targetFeature) {
+            const km = distanceBetweenFeatures(
+                guessedFeature,
+                targetFeature
+            );
+
+            distance.textContent =
+                km < 1 ? "0 km" : Math.round(km) + " km";
+
+            direction.textContent =
+                getDirection(guessedFeature, targetFeature);
+        } else {
+            distance.textContent = "—";
+            direction.textContent = "—";
+        }
+
+        row.appendChild(name);
+        row.appendChild(distance);
+        row.appendChild(direction);
+        list.appendChild(row);
+    });
+}
+
+
+function globleGuess() {
+
+    // Ingen nye gæt mens scoreboardet vises.
+    if (!document.getElementById("globleScoreboard").classList.contains("hidden")) {
+        return;
+    }
+
+    const input = document.getElementById("globleInput");
+    const answer = input.value.trim();
+    const message = document.getElementById("globleMessage");
+
+    if (answer === "") return;
+
+    const country = countries.find(
+        c => c[1].toLowerCase() === answer.toLowerCase()
+    );
+
+    if (!country) {
+        message.textContent = "Country not found.";
+        message.style.color = "#ff6565";
+        input.value = "";
+        input.focus();
+        return;
+    }
+
+    // Undgå at gætte samme land flere gange
+    if (globleGuessed.some(c => c[0] === country[0])) {
+        message.textContent = "You already guessed that country.";
+        message.style.color = "#ffcc66";
+        input.value = "";
+        input.focus();
+        return;
+    }
+
+    globleGuessed.push(country);
+    updateGlobleGuessList();
+
+    if (country[0] === globleTarget[0]) {
+
+        message.textContent =
+            "Correct! You found " + globleTarget[1] + "!";
+        message.style.color = "#4cff91";
+
+        // Vis scoreboardet i de 10 sekunder, hvor vi venter.
+        document.getElementById("globleInput").disabled = true;
+        document.getElementById("globleGuessButton").disabled = true;
+        showGlobleScoreboard();
+        document.getElementById("globleGuessList").classList.add("hidden");
+
+        // Farv det rigtige land grønt
+        const correctFeature = getCountryFeature(country);
+        if (correctFeature) {
+            globeSVG
+                .selectAll(".country")
+                .filter(d => d === correctFeature)
+                .classed("guess-correct", true)
+                .style("fill", "#4cff91");
+        }
+
+        // Start automatisk en ny runde efter 10 sekunder
+        globleNewRoundTimer = setTimeout(() => {
+            if (globleCountdownTimer) {
+                clearInterval(globleCountdownTimer);
+                globleCountdownTimer = null;
+            }
+            startGloble();
+        }, 10000);
+
+        return;
+
+    } else {
+
+        const distanceKm = colorGuess(country);
+
+        if (distanceKm !== null) {
+            const km = Math.round(distanceKm);
+
+            if (km < 1) {
+                message.textContent =
+                    "Wrong! The countries share a border.";
+            } else if (km < 10) {
+                message.textContent =
+                    "Wrong! Less than 10 km to the closest border.";
+            } else {
+                message.textContent =
+                    "Wrong! " + km +
+                    " km to the closest border.";
+            }
+        } else {
+            message.textContent =
+                "Wrong! Try another country.";
+        }
+
+        message.style.color = "#ffffff";
+    }
+
+    input.value = "";
+    input.focus();
+}
+
+
+/* ENTER KEY FOR GLOBLE */
+
+document.getElementById("globleInput").addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+            globleGuess();
+        }
+
+    }
+);
+
+
+/* ========================================================
+   CREATE GLOBE
+======================================================== */
+
+async function createGlobe() {
+
+    globeSVG = d3.select("#globe");
+
+    const width = 600;
+    const height = 600;
+
+    projection = d3.geoOrthographic()
+        .scale(285)
+        .translate([
+            width / 2,
+            height / 2
+        ])
+        .clipAngle(90);
+
+    globePath = d3.geoPath()
+        .projection(projection);
+
+
+    const world = await fetch(
+        "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json"
+    ).then(response => response.json());
+
+
+    const countryData = topojson.feature(
+        world,
+        world.objects.countries
+    );
+
+    globeCountries = countryData.features;
+
+
+    globeSVG
+        .selectAll(".country")
+        .data(countryData.features)
+        .enter()
+        .append("path")
+        .attr("class", "country")
+        .attr("d", globePath);
+
+
+    globeSVG
+        .append("circle")
+        .attr("class", "globe-border")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("r", 285);
+
+
+    /* ====================================================
+       ROTATION
+    ==================================================== */
+
+    let isDragging = false;
+
+    let startX = 0;
+    let startY = 0;
+
+    let startRotation = [0, 0];
+
+
+    const container =
+        document.getElementById("globeContainer");
+
+
+    container.addEventListener(
+        "mousedown",
+        function(event) {
+
+            isDragging = true;
+
+            startX = event.clientX;
+            startY = event.clientY;
+
+            startRotation =
+                projection.rotate().slice();
+        }
+    );
+
+
+    window.addEventListener(
+        "mousemove",
+        function(event) {
+
+            if (!isDragging) return;
+
+
+            const dx =
+                event.clientX - startX;
+
+            const dy =
+                event.clientY - startY;
+
+
+            const rotation =
+                startRotation.slice();
+
+
+            rotation[0] =
+                startRotation[0] + dx * 0.5;
+
+            rotation[1] =
+                startRotation[1] - dy * 0.5;
+
+
+            rotation[1] =
+                Math.max(
+                    -90,
+                    Math.min(90, rotation[1])
+                );
+
+
+            projection.rotate(rotation);
+
+
+            globeSVG
+                .selectAll(".country")
+                .attr("d", globePath);
+        }
+    );
+
+
+    window.addEventListener(
+        "mouseup",
+        function() {
+            isDragging = false;
+        }
+    );
+
+
+    /* TOUCH */
+
+    container.addEventListener(
+        "touchstart",
+        function(event) {
+
+            if (event.touches.length !== 1) return;
+
+            const touch =
+                event.touches[0];
+
+            isDragging = true;
+
+            startX = touch.clientX;
+            startY = touch.clientY;
+
+            startRotation =
+                projection.rotate().slice();
+
+        },
+        { passive: false }
+    );
+
+
+    container.addEventListener(
+        "touchmove",
+        function(event) {
+
+            if (!isDragging) return;
+
+            if (event.touches.length !== 1) return;
+
+            event.preventDefault();
+
+            const touch =
+                event.touches[0];
+
+
+            const dx =
+                touch.clientX - startX;
+
+            const dy =
+                touch.clientY - startY;
+
+
+            const rotation =
+                startRotation.slice();
+
+
+            rotation[0] =
+                startRotation[0] + dx * 0.5;
+
+            rotation[1] =
+                startRotation[1] - dy * 0.5;
+
+
+            rotation[1] =
+                Math.max(
+                    -90,
+                    Math.min(90, rotation[1])
+                );
+
+
+            projection.rotate(rotation);
+
+
+            globeSVG
+                .selectAll(".country")
+                .attr("d", globePath);
+
+        },
+        { passive: false }
+    );
+
+
+    container.addEventListener(
+        "touchend",
+        function() {
+
+            isDragging = false;
+
+        }
+    );
+}
+
+
+/* ========================================================
+   BACK TO MENU
+======================================================== */
+
+function backToMenu() {
+
+    document.getElementById("gameScreen").classList.add("hidden");
+
+    document.getElementById("globleScreen").classList.add("hidden");
+
+    document.getElementById("endScreen").classList.add("hidden");
+
+    document.getElementById("menuScreen").classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>
+
+```
